@@ -44,9 +44,9 @@ def main():
     geography=df[['Geography']]
     geo_enc=pd.DataFrame(geo_encode.transform(geography).toarray(),columns=geo_encode.get_feature_names_out())
     df=pd.concat([df,geo_enc], axis=1)
-    minmax_col = ['Tenure', 'Balance', 'NumOfProducts', 'EstimatedSalary']
+    minmax_col = ['Tenure', 'Balance', 'EstimatedSalary']
     df[minmax_col] = minmax_scaler.transform(df[minmax_col])
-    robust_col = ['CreditScore', 'Age']
+    robust_col = ['CreditScore', 'Age', 'NumOfProducts']
     df[robust_col] = robust_scaler.transform(df[robust_col])
     df=df.drop(['Geography'],axis=1)
     df=df.drop('Unnamed: 0', axis=1)
