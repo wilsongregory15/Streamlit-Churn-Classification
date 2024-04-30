@@ -15,20 +15,19 @@ def main():
 
     # Add user input components for 10 features
     #input one by one
-    id=st.number_input("id", 0, 200000)
-    customer_id=st.number_input("Customer Id", 0, 15000000)
-    surname = st.text_input("Surname")
-    creditscore = st.number_input("Credit Score", 350, 850)
-    geography=st.radio("Geography", ["France","Germany", "Spain"])
-    gender=st.radio("Gender", ["Male","Female"])
-    age=st.number_input("Age", 18, 92)
-    tenure=st.number_input("Tenure", 0,10)
-    balance=st.number_input("Balance", 0.0,251000.0)
-    numproducts=st.radio("Number of Products", ["1","2", "3", "4"])
-    creditcard=st.radio("Are you have a Credit Card? [0=No, 1=Yes]", ["0","1"])
-    activeMem=st.radio("Are you an Active Member? [0=No, 1=Yes]", ["0","1"])
-    estimatedSal=st.number_input("Estimated Salary", 11.580, 199992.48)
-
+    id = st.number_input("ID (range: 0 - 200,000)", 0, 200000)
+    customer_id = st.number_input("Customer ID (range: 0 - 15,000,000)", 0, 15000000)
+    surname = st.text_input("Your Surname")
+    creditscore = st.number_input("Credit Score (range: 350 - 850)", 350, 850)
+    geography = st.radio("Select Your Geography", ["France", "Germany", "Spain"])
+    gender = st.radio("Select Your Gender", ["Male", "Female"])
+    age = st.number_input("Input Your Age (range: 18 - 92)", 18, 92)
+    tenure = st.number_input("Input Your Tenure (range: 0 - 10)", 0, 10)
+    balance = st.number_input("Balance", 0.0, 251000.0)
+    numproducts = st.radio("Number of Products", ["1", "2", "3", "4"])
+    creditcard = st.radio("Do You Have a Credit Card? [0=No, 1=Yes]", ["0", "1"])
+    activeMem = st.radio("Are You an Active Member? [0=No, 1=Yes]", ["0", "1"])
+    estimatedSal = st.number_input("Estimated Salary", 11.58, 199992.48)
 
     data = {'Unnamed: 0': 0, 'id': int(id), 'CustomerId': int(customer_id), 'Surname': surname,
             'CreditScore': int(creditscore), 'Geography':geography, 'Gender':gender,
