@@ -13,7 +13,7 @@ robust_scaler=joblib.load('robust_scaler.pkl')
 
 
 def main():
-    st.title('Churn Model Deployment by Maria Linneke Adjie ')
+    st.title('Churn Model Deployment by Wilson Gregory Pribadi')
 
     # Add user input components for 10 features
     #input one by one
