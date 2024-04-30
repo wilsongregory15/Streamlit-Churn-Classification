@@ -39,10 +39,7 @@ def main():
     
     # Replace categorical values with encoded values
     df=df.replace(binary_encoding)
-    if 'Geography' in df.columns:
-        df = pd.get_dummies(df, columns=['Geography'])  # Apply one-hot encoding for Geography
-    else:
-        st.error("DataFrame doesn't contain 'Geography' column.")
+    df = pd.get_dummies(df, columns=['Geography'])  # Apply one-hot encoding for Geography
     
     # Scale numerical features
     df['CreditScore'] = robust_scaler.transform(df[['CreditScore']])
