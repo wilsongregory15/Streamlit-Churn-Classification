@@ -2,59 +2,68 @@ import streamlit as st
 import joblib
 import numpy as np
 import pandas as pd
-from sklearn.preprocessing import RobustScaler, OneHotEncoder
 
-# Load the machine learning model and encodings/scalers
+# Load the machine learning model and encode
 model = joblib.load('trained_model.pkl')
-binary_encoding = joblib.load('gender_binary_encoding.pkl')
-one_hot_encoding = joblib.load('geo_one_hot_encoder.pkl')
-minmax_scaler = joblib.load('minmax_scaler.pkl')
-robust_scaler = joblib.load('robust_scaler.pkl')
+gender_encode= joblib.load('gender_binary_encoding.pkl')
+geo_encode=joblib.load('geo_one_hot_encoder.pkl')
+minmax_scaler= joblib.load('minmax_scaler.pkl')
+robust_scaler=joblib.load('robust_scaler.pkl')
+
+
 
 def main():
-    st.title('Churn Model Deployment')
-    
-    HasCrCard = st.text_input("Surname: ")
-    HasCrCard = st.radio("Geography: ", ["France","Germany", 'Spain'])
-    CreditScore = st.number_input("Credit Score :", 300,900)
-    Age = st.number_input("Input Age", 0, 100)
-    Gender = st.radio("Input Gender : ", ["Male","Female"])
-    Tenure = st.number_input("the period of time you holds a position (in years)", 0,100)
-    Balance = st.number_input("Balance :")
-    NumOfProducts = st.number_input("Number Of Products :")
-    HasCrCard = st.radio("I Have a Credit Card : ", ["Yes","No"])
-    IsActiveMember = st.radio("I am an Active Member : ", ["Yes","No"])
-    EstimatedSalary = st.number_input("Estimated Salary :")
+    st.title('Churn Model Deployment by Maria Linneke Adjie ')
 
-    
-    data = {'CreditScore':int(CreditScore),
-            'Gender': Gender, 'Age': int(Age), 
-            'Tenure': int(Tenure), 'Balance': Balance,
-            'NumOfProducts': int(NumOfProducts), 'HasCrCard': HasCrCard,
-            'IsActiveMember':IsActiveMember,'EstimatedSalary': EstimatedSalary}
-    
-    df=pd.DataFrame([list(data.values())], columns=['CreditScore','Gender',  
-                                                'Age', 'Tenure','Balance', 
-                                                'NumOfProducts', 'HasCrCard' ,'IsActiveMember', 'EstimatedSalary'])
-    
-    # Replace categorical values with encoded values
-    df=df.replace(binary_encoding)
-    df = pd.get_dummies(df, columns=['Geography'])  # Apply one-hot encoding for Geography
-    
-    # Scale numerical features
-    df['CreditScore'] = robust_scaler.transform(df[['CreditScore']])
-    df['Age'] = robust_scaler.transform(df[['Age']])
-    df['NumOfProducts'] = robust_scaler.transform(df[['NumOfProducts']])
-    df['Tenure'] = minmax_scaler.transform(df[['Tenure']])
-    df['Balance'] = minmax_scaler.transform(df[['Balance']])
-    df['EstimatedSalary'] = minmax_scaler.transform(df[['EstimatedSalary']])
-    
+    # Add user input components for 10 features
+    #input one by one
+    id=st.number_input("id", 0, 100000)
+    customer_id=st.number_input("Customer Id", 0, 10000000)
+    surname = st.text_input("Surname")
+    creditscore = st.number_input("Credit Score", min_value=0.0, max_value=1000.0)
+    geography=st.radio("Geography", ["France","Germany", "Spain"])
+    gender=st.radio("Gender", ["Male","Female"])
+    age=st.number_input("Age", 0, 100)
+    tenure=st.number_input("Tenure", 0,10)
+    balance=st.number_input("Balance", 0.0,1000000.0)
+    numproducts=st.radio("Number of Products", ["1", "2", "3", "4"])
+    creditcard=st.radio("Are you have a Credit Card? [0=No, 1=Yes]", ["0","1"])
+    activeMem=st.radio("Are you an Active Member? [0=No, 1=Yes]", ["0","1"])
+    estimatedSal=st.number_input("Estimated Salary", 0.0, 1000000.0)
+
+
+    data = {'Unnamed: 0': 0, 'id': int(id), 'CustomerId': int(customer_id), 'Surname': surname,
+            'CreditScore': float(creditscore), 'Geography':geography, 'Gender':gender,
+            'Age': float(age), 'Tenure':int(tenure), 'Balance': float(balance),
+            'NumOfProducts':int(numproducts), 'HasCrCard': int(creditcard),
+            'IsActiveMember':int(activeMem),'EstimatedSalary':float(estimatedSal)}
+
+    df=pd.DataFrame([list(data.values())], columns=['Unnamed: 0', 'id', 'CustomerId', 'Surname', 'CreditScore', 'Geography',
+                                                    'Gender', 'Age', 'Tenure', 'Balance', 'NumOfProducts', 'HasCrCard',
+                                                    'IsActiveMember', 'EstimatedSalary'])
+
+    df=df.replace(gender_encode)
+    geography=df[['Geography']]
+    geo_enc=pd.DataFrame(geo_encode.transform(geography).toarray(),columns=geo_encode.get_feature_names_out())
+    df=pd.concat([df,geo_enc], axis=1)
+    minmax_col = ['Tenure', 'Balance', 'NumOfProducts', 'EstimatedSalary']
+    df[minmax_col] = minmax_scaler.transform(df[minmax_col])
+    robust_col = ['CreditScore', 'Age']
+    df[robust_col] = robust_scaler.transform(df[robust_col])
+    df=df.drop(['Geography'],axis=1)
+    df=df.drop('Unnamed: 0', axis=1)
+    df=df.drop('id', axis=1)
+    df=df.drop('CustomerId', axis=1)
+    df=df.drop('Surname', axis=1)
+
     if st.button('Make Prediction'):
-        features=df      
+        features=df
         result = make_prediction(features)
         st.success(f'The prediction is: {result}')
 
 def make_prediction(features):
+    # Use the loaded model to make predictions
+    # Replace this with the actual code for your model
     input_array = np.array(features).reshape(1, -1)
     prediction = model.predict(input_array)
     return prediction[0]
